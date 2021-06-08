@@ -41,7 +41,6 @@ exports.postAddProduct = (req, res, next) => {
   }
 
   const product = new Product({
-    // _id: new mongoose.Types.ObjectId('5badf72403fd8b5be0366e81'),
     title: title,
     price: price,
     description: description,
@@ -158,7 +157,7 @@ exports.getProducts = (req, res, next) => {
     // .select('title price -_id')
     // .populate('userId', 'name')
     .then(products => {
-      console.log(products);
+      // console.log(products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',

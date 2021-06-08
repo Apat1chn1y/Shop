@@ -2,19 +2,19 @@ const crypto = require('crypto');
 
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport');
+// const sendgridTransport = require('nodemailer-sendgrid-transport');
 const { validationResult } = require('express-validator/check');
 
 const User = require('../models/user');
 
-const transporter = nodemailer.createTransport(
-  sendgridTransport({
-    auth: {
-      api_key:
-        ''
-    }
-  })
-);
+
+const transporter = nodemailer.createTransport({
+  service: process.env.MAIL_SERVICE,
+  auth: {
+    user: process.env.SERV_MAIL_AD,
+    pass: process.env.SERV_MAIL_PASS,
+  },
+});
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
@@ -140,6 +140,9 @@ exports.postSignup = (req, res, next) => {
       validationErrors: errors.array()
     });
   }
+  User.findOne({ email: email })
+    .then(user => {
+      if (!user) {
 
   bcrypt
     .hash(password, 12)
@@ -154,18 +157,18 @@ exports.postSignup = (req, res, next) => {
     })
     .then(result => {
       res.redirect('/login');
-      // return transporter.sendMail({
-      //   to: email,
-      //   from: 'shop@node-complete.com',
-      //   subject: 'Signup succeeded!',
-      //   html: '<h1>You successfully signed up!</h1>'
-      // });
+      return transporter.sendMail({
+        to: email,
+        from: 'yourshoptest@gmail.com',
+        subject: 'Signup succeeded!',
+        html: '<h1>You successfully signed up!</h1>'
+      });
     })
     .catch(err => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    });
+    })}else{res.redirect('/500')}});
 };
 
 exports.postLogout = (req, res, next) => {
@@ -210,11 +213,11 @@ exports.postReset = (req, res, next) => {
         res.redirect('/');
         transporter.sendMail({
           to: req.body.email,
-          from: 'shop@chtototam.com',
+          from: 'yourshoptest@gmail.com',
           subject: 'Password reset',
           html: `
             <p>You requested a password reset</p>
-            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+            <p>Click this <a href="${process.env.APP_ADDRESS}/reset/${token}">link</a> to set a new password.</p>
           `
         });
       })

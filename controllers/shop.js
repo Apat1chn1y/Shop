@@ -108,7 +108,7 @@ exports.postCart = (req, res, next) => {
     })
     .then(result => {
       console.log(result);
-      res.redirect('/cart');
+      res.redirect('/products');
     })
     .catch(err => {
       const error = new Error(err);
