@@ -16,9 +16,11 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
+  const categorie = req.body.categorie;
   const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
+  const prices = req.body.prices;
   const description = req.body.description;
   const errors = validationResult(req);
 
@@ -30,9 +32,11 @@ exports.postAddProduct = (req, res, next) => {
       editing: false,
       hasError: true,
       product: {
+        categorie: categorie,
         title: title,
         imageUrl: imageUrl,
         price: price,
+        prices: prices,
         description: description
       },
       errorMessage: errors.array()[0].msg,
@@ -41,8 +45,10 @@ exports.postAddProduct = (req, res, next) => {
   }
 
   const product = new Product({
+    categorie: categorie,
     title: title,
     price: price,
+    prices: prices,
     description: description,
     imageUrl: imageUrl,
     userId: req.user
@@ -106,8 +112,10 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
+  const updatedCategorie = req.body.categorie;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
+  const updatedPrices = req.body.prices;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
@@ -120,9 +128,11 @@ exports.postEditProduct = (req, res, next) => {
       editing: true,
       hasError: true,
       product: {
+        categorie: updatedCategorie,
         title: updatedTitle,
         imageUrl: updatedImageUrl,
         price: updatedPrice,
+        prices: updatedPrices,
         description: updatedDesc,
         _id: prodId
       },
@@ -136,8 +146,10 @@ exports.postEditProduct = (req, res, next) => {
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect('/');
       }
+      product.categorie = updatedCategorie;
       product.title = updatedTitle;
       product.price = updatedPrice;
+      product.prices = updatedPrices;
       product.description = updatedDesc;
       product.imageUrl = updatedImageUrl;
       return product.save().then(result => {

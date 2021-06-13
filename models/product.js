@@ -3,11 +3,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
+  categorie:{
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
   },
   price: {
+    type: Number,
+    required: true
+  },
+  prices: {
     type: Number,
     required: true
   },
@@ -22,9 +30,12 @@ const productSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   }
 });
+
+
+
 
 module.exports = mongoose.model('Product', productSchema);
 

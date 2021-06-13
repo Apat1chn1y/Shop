@@ -11,6 +11,9 @@
                         <% for (let product of prods) { %>
                             <article class="card product-item">
                                 <header class="card__header">
+                                    <h1 class="product__categorie">
+                                        <%= product.categorie %>
+                                    </h1>
                                     <h1 class="product__title">
                                         <%= product.title %>
                                     </h1>
@@ -19,8 +22,13 @@
                                     <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
                                 </div>
                                 <div class="card__content">
+                                    <h4>Price for authorized customers</h4>
                                     <h2 class="product__price">$
                                         <%= product.price %>
+                                    </h2>
+                                    <h4>Price for unauthorized customers</h4>
+                                    <h2 class="product__price">$
+                                        <%= product.prices %>
                                     </h2>
                                     <p class="product__description">
                                         <%= product.description %>

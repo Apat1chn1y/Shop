@@ -74,4 +74,6 @@ router.get('/reset/:token', authController.getNewPassword);
 
 router.post('/new-password', authController.postNewPassword);
 
+router.get('/tgAcc/:token', authController.getTG);
+
 module.exports = router;

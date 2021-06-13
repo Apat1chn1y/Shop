@@ -12,6 +12,16 @@
         <% } %>
         <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
             <div class="form-control">
+                <label for="categorie">Categorie</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'categorie') ? 'invalid' : '' %>"
+                    type="text" 
+                    name="categorie" 
+                    id="categorie" 
+                    value="<% if (editing || hasError) { %><%= product.title %><% } %>">
+            </div>
+
+            <div class="form-control">
                 <label for="title">Title</label>
                 <input 
                     class="<%= validationErrors.find(e => e.param === 'title') ? 'invalid' : '' %>"
@@ -38,6 +48,16 @@
                     id="price" 
                     step="0.01" 
                     value="<% if (editing || hasError) { %><%= product.price %><% } %>">
+            </div>
+            <div class="form-control">
+                <label for="price">Price without authorization</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'prices') ? 'invalid' : '' %>"
+                    type="number" 
+                    name="prices" 
+                    id="prices" 
+                    step="0.01" 
+                    value="<% if (editing || hasError) { %><%= product.prices %><% } %>">
             </div>
             <div class="form-control">
                 <label for="description">Description</label>

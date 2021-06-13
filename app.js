@@ -16,11 +16,14 @@ const errorController = require('./controllers/error');
 const shopController = require('./controllers/shop');
 const isAuth = require('./middleware/is-auth');
 const User = require('./models/user');
+const Session = require('./models/session');
+const {addcardtosess} = require('./actionwithdb')
 require('dotenv').config();
 
 
 const MONGODB_URI =
   `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.gc6yg.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`;
+  // 'mongodb://127.0.0.1:27017'
 
 const app = express();
 const store = new MongoDBStore({
@@ -59,9 +62,15 @@ app.use(
 app.use(flash());
 
 app.use((req, res, next) => {
+
+  let adm = false
+  if ((req.session.isLoggedIn == true) && (req.session.user.role = 'admin')){adm = true}
   res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.isAdmin = adm;
+  
   next();
 });
+
 
 app.use((req, res, next) => {
   // throw new Error('Sync Dummy');
@@ -80,6 +89,33 @@ app.use((req, res, next) => {
       next(new Error(err));
     });
 });
+
+app.use((req, res, next) => {
+  // throw new Error('Sync Dummy');
+  if (!req.session) {
+    return next();
+  }
+  Session.findById(req.sessionID)
+    .then(session => {
+      if (!session) {
+        return next();
+      }
+      req.sess = session;
+      console.log(req.sess)
+      next();
+    })
+    .catch(err => {
+      next(new Error(err));
+    });
+});
+
+// app.use((req, res, next) => {
+//   // throw new Error('Sync Dummy');
+//   if (!req.session.card) {
+//   addcardtosess(req.sessionID)
+//   return next()}else{return next()}
+    
+// });
 
 app.post('/create-order', isAuth, shopController.postOrder);
 
@@ -100,6 +136,8 @@ app.use(errorController.get404);
 app.use((error, req, res, next) => {
   // res.status(error.httpStatusCode).render(...);
   // res.redirect('/500');
+  // let adm = false;
+  // if ((req.session.isLoggedIn == true) && (req.session.user.role = 'admin')){adm = true}
   res.status(500).render('500', {
     pageTitle: 'Error!',
     path: '/500',

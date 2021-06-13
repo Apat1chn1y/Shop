@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator/check');
 
 const User = require('../models/user');
+const { startSession } = require('../models/user');
 
 
 const transporter = nodemailer.createTransport({
@@ -58,7 +59,9 @@ exports.getSignup = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-
+  console.log('id', req.sessionID)
+  console.log('session', req.session)
+  console.log('sess', req.sess)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render('auth/login', {
@@ -93,6 +96,13 @@ exports.postLogin = (req, res, next) => {
           if (doMatch) {
             req.session.isLoggedIn = true;
             req.session.user = user;
+            if (req.sess.cart){
+            user.cart = req.sess.cart;
+            }
+            if (req.session.tg){
+              user.tgName = req.session.tg
+            }
+            user.save();
             return req.session.save(err => {
               console.log(err);
               res.redirect('/');
@@ -151,7 +161,8 @@ exports.postSignup = (req, res, next) => {
         email: email,
         password: hashedPassword,
         role: 'user',
-        cart: { items: [] }
+        cart: { items: [] },
+        tgName: ''
       });
       return user.save();
     })
@@ -228,6 +239,21 @@ exports.postReset = (req, res, next) => {
       });
   });
 };
+exports.getTG = (req, res, next) => {
+  const token = req.params.token;
+  console.log(req.sessionID)
+  if (token){
+    // Session.findById(req.sessionID)
+    // .then(session => {
+    //   console.log
+    //   req.session = session;
+    req.session.tg = token;
+    req.session.save();
+
+  
+  
+  return res.redirect('/login');}else{return res.redirect('/')};
+}
 
 exports.getNewPassword = (req, res, next) => {
   const token = req.params.token;
