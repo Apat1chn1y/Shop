@@ -24,7 +24,7 @@ exports.getCartLink = (req, res, next) =>{
   .then(uniqueString => {
   console.log(req.user);
 
-  if (req.user){
+  if (req.session.isLoggedIn == true){
   transporter.sendMail({
     to: email,
     from: 'yourshoptest@gmail.com',
