@@ -9,6 +9,16 @@
             <li class="main-header__item">
                 <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
             </li>
+            <div class="dropdown">
+                <button class="dropbtn">Categories
+                  <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                  <a href="/products/Anime">Anime</a>
+                  <a href="/products/Manga">Manga</a>
+                  <a href="/products/Figure">Figure</a>
+                </div>
+              </div>
             <li class="main-header__item">
                 <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
             </li>
@@ -24,6 +34,12 @@
                 </li>
                 <li class="main-header__item">
                     <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Admin Products
+                    </a>
+                </li>
+            <% } %>
+            <% if (!isAdmin) { %>
+                <li class="main-header__item">
+                    <a class="<%= path === '/cartlink' ? 'active' : '' %>" href="/cartlink">Get cart link
                     </a>
                 </li>
             <% } %>
@@ -56,21 +72,37 @@
         <li class="mobile-nav__item">
             <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
         </li>
+        <div class="dropdown">
+            <button class="dropbtn">Categories
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="/products/Anime">Anime</a>
+              <a href="/products/Manga">Manga</a>
+              <a href="/products/Figure">Figure</a>
+            </div>
+          </div>
         <li class="main-header__item">
             <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
         </li>
         <% if (isAuthenticated) { %>
-            <li class="main-header__item">
+            <li class="mobile-nav__item">
                 <a class="<%= path === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
             </li>
         <% } %>
         <% if (isAdmin) { %>
-            <li class="main-header__item">
+            <li class="mobile-nav__item">
                 <a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">Add Product
                 </a>
             </li>
-            <li class="main-header__item">
+            <li class="mobile-nav__item">
                 <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Admin Products
+                </a>
+            </li>
+        <% } %>
+        <% if (!isAdmin) { %>
+            <li class="mobile-nav__item">
+                <a class="<%= path === '/cartlink' ? 'active' : '' %>" href="/cartlink">Get cart link
                 </a>
             </li>
         <% } %>

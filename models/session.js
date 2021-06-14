@@ -11,7 +11,8 @@ const sessionSchema = new Schema({
     flash: Object,
     isLoggedIn: Boolean,
     user: Object,
-    tg: String},
+    tg: String,
+    cartString: String},
     cart: {
       items: [
         {

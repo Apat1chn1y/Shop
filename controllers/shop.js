@@ -5,7 +5,6 @@ const stripe = require('stripe')(process.env.STRIPE_KEY);
 const ITEMS_PER_PAGE = 4;
 
 // function countPR(arr){return arr.length}
-
 exports.getProducts = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
@@ -45,6 +44,132 @@ exports.getProducts = (req, res, next) => {
       return next(error);
     });
 };
+
+
+
+exports.getProductsA = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+  // let {categorie} = req.body
+  Product.find({categorie: 'Anime'})
+    .countDocuments()
+    .then(numProducts => {
+      totalItems = numProducts;
+      return (Product.find({categorie: 'Anime'})
+      // To sort in descending order (newest at top of list)
+      // .sort({ _id: -1 })
+      // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      // Only fetch amt of items to display on current page
+      .limit(ITEMS_PER_PAGE)
+  );
+
+    })
+    .then(products => {
+      
+      
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Products Anime',
+        path: '/products/Anime',
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+
+exports.getProductsM = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+  // let {categorie} = req.body
+  Product.find({categorie: 'Manga'})
+    .countDocuments()
+    .then(numProducts => {
+      totalItems = numProducts;
+      return (Product.find({categorie: 'Manga'})
+      // To sort in descending order (newest at top of list)
+      // .sort({ _id: -1 })
+      // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      // Only fetch amt of items to display on current page
+      .limit(ITEMS_PER_PAGE)
+  );
+
+    })
+    .then(products => {
+      
+      
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Products Manga',
+        path: '/products/Manga',
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+
+exports.getProductsF = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+  // let {categorie} = req.body
+  Product.find({categorie: 'Figure'})
+    .countDocuments()
+    .then(numProducts => {
+      totalItems = numProducts;
+      return (Product.find({categorie: 'Figure'})
+      // To sort in descending order (newest at top of list)
+      // .sort({ _id: -1 })
+      // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      // Only fetch amt of items to display on current page
+      .limit(ITEMS_PER_PAGE)
+  );
+
+    })
+    .then(products => {
+      
+      
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'Products Figure',
+        path: '/products/Figure',
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;

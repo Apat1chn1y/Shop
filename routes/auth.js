@@ -76,4 +76,8 @@ router.post('/new-password', authController.postNewPassword);
 
 router.get('/tgAcc/:token', authController.getTG);
 
+router.get('/cartlink', authController.getCartLink);
+
+router.get('/getcart/:token', authController.getCart);
+
 module.exports = router;

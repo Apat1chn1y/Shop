@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+var uid = require('uid-safe')
 
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
@@ -6,6 +7,7 @@ const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator/check');
 
 const User = require('../models/user');
+const Session = require('../models/session')
 const { startSession } = require('../models/user');
 
 
@@ -16,6 +18,40 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SERV_MAIL_PASS,
   },
 });
+
+exports.getCartLink = (req, res, next) =>{
+  uid(24)
+  .then(uniqueString => {
+  console.log(req.user);
+
+  if (req.user){
+  transporter.sendMail({
+    to: email,
+    from: 'yourshoptest@gmail.com',
+    subject: 'Your cart',
+    html: `
+            <p>You requested card access link</p>
+            <p>Click this <a href="${process.env.APP_ADDRESS}/getcart/${uniqueString}">link</a> To get your cart.</p>
+          `
+  });
+  req.session.cartString = uniqueString
+  res.render('auth/cartlink', {
+    path: '/cartlink',
+    pageTitle: 'Your cart link',
+    Message: 'Follow the link that was sent to your email.'})
+
+  }else{
+
+  req.session.cartString = uniqueString
+  res.render('auth/cartlink', {
+    path: '/cartlink',
+    pageTitle: 'Your cart link',
+    Message: `This link leads to your cart: ${process.env.APP_ADDRESS}/getcart/${uniqueString}`})
+
+  }})
+
+
+}
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
@@ -253,6 +289,25 @@ exports.getTG = (req, res, next) => {
   
   
   return res.redirect('/login');}else{return res.redirect('/')};
+}
+
+
+exports.getCart = (req, res, next) => {
+  const token = req.params.token;
+  let ss;
+  if (token){
+    // Session.findById(req.sessionID)
+    // .then(session => {
+    //   console.log
+    //   req.session = session;
+    Session.findOne({'session.cartString': token })
+    .then(session => {ss = session.cart})
+    Session.findOne({'_id': req.sessionID })
+    .then(session => {
+      session.cart = ss;
+      session.save()})
+  
+  return res.redirect('/cart');}else{return res.redirect('/')};
 }
 
 exports.getNewPassword = (req, res, next) => {

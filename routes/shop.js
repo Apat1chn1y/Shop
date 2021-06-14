@@ -11,6 +11,12 @@ router.get('/', shopController.getIndex);
 
 router.get('/products', shopController.getProducts);
 
+router.get('/products/Anime', shopController.getProductsA);
+
+router.get('/products/Manga', shopController.getProductsM);
+
+router.get('/products/Figure', shopController.getProductsF);
+
 router.get('/products/:productId', shopController.getProduct);
 
 router.get('/cart',  shopController.getCart);    //router.get('/cart', isAuth, shopController.getCart);
