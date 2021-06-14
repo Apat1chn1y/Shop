@@ -18,7 +18,7 @@
 
                     </div>
                 </div> -->
-
+                
                 <% if (prods.length > 0) { %>
                     <div class="grid">
                         <% for (let product of prods) { %>
@@ -32,14 +32,18 @@
                                     <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
                                 </div>
                                 <div class="card__content">
+                                    <% if (isAuthenticated) { %>
                                     <h4>Price for authorized customers</h4>
                                     <h2 class="product__price">$
                                         <%= product.price %>
                                     </h2>
+                                    <% } %>
+                                    <% if (!isAuthenticated) { %>
                                     <h4>Price for unauthorized customers</h4>
                                     <h2 class="product__price">$
                                         <%= product.prices %>
                                     </h2><br>
+                                    <% } %>
                                     <p class="product__description">
                                         <%= product.description %>
                                     </p>

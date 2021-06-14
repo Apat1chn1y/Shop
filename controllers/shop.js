@@ -6,14 +6,15 @@ const ITEMS_PER_PAGE = 4;
 
 // function countPR(arr){return arr.length}
 exports.getProducts = (req, res, next) => {
+  if (req.session.isLoggedIn == true){
   const page = +req.query.page || 1;
   let totalItems;
   // let {categorie} = req.body
-  Product.find()
+  Product.find({price: {$ne: 0}})
     .countDocuments()
     .then(numProducts => {
       totalItems = numProducts;
-      return (Product.find()
+      return (Product.find({price: {$ne: 0}})
       // To sort in descending order (newest at top of list)
       // .sort({ _id: -1 })
       // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
@@ -42,20 +43,61 @@ exports.getProducts = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    });
+    });}else{
+      const page = +req.query.page || 1;
+      let totalItems;
+      // let {categorie} = req.body
+      Product.find({prices: {$ne: 0}})
+        .countDocuments()
+        .then(numProducts => {
+          totalItems = numProducts;
+          return (Product.find({prices: {$ne: 0}})
+          // To sort in descending order (newest at top of list)
+          // .sort({ _id: -1 })
+          // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // Only fetch amt of items to display on current page
+          .limit(ITEMS_PER_PAGE)
+      );
+    
+        })
+        .then(products => {
+          
+          
+          
+          res.render('shop/product-list', {
+            prods: products,
+            pageTitle: 'Products',
+            path: '/products',
+            currentPage: page,
+            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+          });
+        })
+        .catch(err => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+        });
+
+    }
 };
 
 
 
 exports.getProductsA = (req, res, next) => {
+  if (req.session.isLoggedIn == true){
   const page = +req.query.page || 1;
   let totalItems;
   // let {categorie} = req.body
-  Product.find({categorie: 'Anime'})
+  Product.find({categorie: 'Anime', price: {$ne: 0}})
     .countDocuments()
     .then(numProducts => {
       totalItems = numProducts;
-      return (Product.find({categorie: 'Anime'})
+      return (Product.find({categorie: 'Anime', price: {$ne: 0}})
       // To sort in descending order (newest at top of list)
       // .sort({ _id: -1 })
       // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
@@ -84,19 +126,59 @@ exports.getProductsA = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    });
+    });}else{const page = +req.query.page || 1;
+      let totalItems;
+      // let {categorie} = req.body
+      Product.find({categorie: 'Anime', prices: {$ne: 0}})
+        .countDocuments()
+        .then(numProducts => {
+          totalItems = numProducts;
+          return (Product.find({categorie: 'Anime', prices: {$ne: 0}})
+          // To sort in descending order (newest at top of list)
+          // .sort({ _id: -1 })
+          // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // Only fetch amt of items to display on current page
+          .limit(ITEMS_PER_PAGE)
+      );
+    
+        })
+        .then(products => {
+          
+          
+          res.render('shop/product-list', {
+            prods: products,
+            pageTitle: 'Products Anime',
+            path: '/products/Anime',
+            currentPage: page,
+            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+          });
+        })
+        .catch(err => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+        });
+
+
+    }
 };
 
 
 exports.getProductsM = (req, res, next) => {
+  if (req.session.isLoggedIn == true){
   const page = +req.query.page || 1;
   let totalItems;
   // let {categorie} = req.body
-  Product.find({categorie: 'Manga'})
+  Product.find({categorie: 'Manga', price: {$ne: 0}})
     .countDocuments()
     .then(numProducts => {
       totalItems = numProducts;
-      return (Product.find({categorie: 'Manga'})
+      return (Product.find({categorie: 'Manga', price: {$ne: 0}})
       // To sort in descending order (newest at top of list)
       // .sort({ _id: -1 })
       // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
@@ -125,19 +207,59 @@ exports.getProductsM = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    });
+    });}else{ const page = +req.query.page || 1;
+      let totalItems;
+      // let {categorie} = req.body
+      Product.find({categorie: 'Manga', prices: {$ne: 0}})
+        .countDocuments()
+        .then(numProducts => {
+          totalItems = numProducts;
+          return (Product.find({categorie: 'Manga', prices: {$ne: 0}})
+          // To sort in descending order (newest at top of list)
+          // .sort({ _id: -1 })
+          // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // Only fetch amt of items to display on current page
+          .limit(ITEMS_PER_PAGE)
+      );
+    
+        })
+        .then(products => {
+          
+          
+          res.render('shop/product-list', {
+            prods: products,
+            pageTitle: 'Products Manga',
+            path: '/products/Manga',
+            currentPage: page,
+            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+          });
+        })
+        .catch(err => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+        });
+
+
+    }
 };
 
 
 exports.getProductsF = (req, res, next) => {
+  if (req.session.isLoggedIn == true){
   const page = +req.query.page || 1;
   let totalItems;
   // let {categorie} = req.body
-  Product.find({categorie: 'Figure'})
+  Product.find({categorie: 'Figure', price: {$ne: 0}})
     .countDocuments()
     .then(numProducts => {
       totalItems = numProducts;
-      return (Product.find({categorie: 'Figure'})
+      return (Product.find({categorie: 'Figure', price: {$ne: 0}})
       // To sort in descending order (newest at top of list)
       // .sort({ _id: -1 })
       // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
@@ -166,7 +288,46 @@ exports.getProductsF = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    });
+    });}else{const page = +req.query.page || 1;
+      let totalItems;
+      // let {categorie} = req.body
+      Product.find({categorie: 'Figure', prices: {$ne: 0}})
+        .countDocuments()
+        .then(numProducts => {
+          totalItems = numProducts;
+          return (Product.find({categorie: 'Figure', prices: {$ne: 0}})
+          // To sort in descending order (newest at top of list)
+          // .sort({ _id: -1 })
+          // skip MongoDB and therefore Mongoose method skips first x amt of results and is called on a cursor. find() is an object that returns a cursor, an object that enables iterating through documents of a collection
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // Only fetch amt of items to display on current page
+          .limit(ITEMS_PER_PAGE)
+      );
+    
+        })
+        .then(products => {
+          
+          
+          res.render('shop/product-list', {
+            prods: products,
+            pageTitle: 'Products Figure',
+            path: '/products/Figure',
+            currentPage: page,
+            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+          });
+        })
+        .catch(err => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+        });
+
+
+    }
 };
 
 
@@ -206,10 +367,10 @@ exports.getIndex = (req, res, next) => {
 
 
 exports.getCart = (req, res, next) => {
-  console.log(req.user)
+  
   
   if (req.user){
-
+  console.log(req.user)
   req.user
     .populate('cart.items.productId')
     .execPopulate()

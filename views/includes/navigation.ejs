@@ -72,17 +72,16 @@
         <li class="mobile-nav__item">
             <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
         </li>
-        <div class="dropdown">
-            <button class="dropbtn">Categories
-              <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-              <a href="/products/Anime">Anime</a>
-              <a href="/products/Manga">Manga</a>
-              <a href="/products/Figure">Figure</a>
-            </div>
-          </div>
-        <li class="main-header__item">
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/products' ? 'active' : '' %>" href="/products/Anime">Anime</a>
+        </li>
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/products' ? 'active' : '' %>" href="/products/Manga">Manga</a>
+        </li>
+        <li class="mobile-nav__item">
+            <a class="<%= path === '/products' ? 'active' : '' %>" href="/products/Figure">Figure</a>
+        </li>     
+        <li class="mobile-nav__item">
             <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
         </li>
         <% if (isAuthenticated) { %>

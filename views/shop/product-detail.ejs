@@ -9,10 +9,14 @@
             <div class="image">
                 <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
             </div>
+            <% if (isAuthenticated) { %>
             <h4>Price for authorized customers</h4>
             <h2><%= product.price %></h2>
+            <% } %>
+            <% if (!isAuthenticated) { %>
             <h4>Price for unauthorized customers</h4>
             <h2><%= product.prices %></h2>
+            <% } %>
             <p><%= product.description %></p>
             <%- include('../includes/add-to-cart.ejs', {product: product}) %>
         </main>
