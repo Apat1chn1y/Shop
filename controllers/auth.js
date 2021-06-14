@@ -26,7 +26,7 @@ exports.getCartLink = (req, res, next) =>{
 
   if (req.session.isLoggedIn == true){
   transporter.sendMail({
-    to: email,
+    to: req.session.user.email,
     from: 'yourshoptest@gmail.com',
     subject: 'Your cart',
     html: `
@@ -38,7 +38,7 @@ exports.getCartLink = (req, res, next) =>{
   res.render('auth/cartlink', {
     path: '/cartlink',
     pageTitle: 'Your cart link',
-    Message: 'Follow the link that was sent to your email.'})
+    Message: `This link leads to your cart (it was also sent to your email): ${process.env.APP_ADDRESS}/getcart/${uniqueString}`})
 
   }else{
 
