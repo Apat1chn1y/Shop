@@ -52,7 +52,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
+    path: '/',
+    httpOnly: true,
     secret: 'my secret',
+    maxAge: 86400000,
     resave: false,
     saveUninitialized: false,
     store: store
