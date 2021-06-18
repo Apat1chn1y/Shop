@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 var uid = require('uid-safe')
 
+const Product = require('../models/product');
+const Order = require('../models/order');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 // const sendgridTransport = require('nodemailer-sendgrid-transport');
@@ -9,6 +11,8 @@ const { validationResult } = require('express-validator/check');
 const User = require('../models/user');
 const Session = require('../models/session')
 const { startSession } = require('../models/user');
+const session = require('../models/session');
+
 
 
 const transporter = nodemailer.createTransport({
@@ -95,9 +99,9 @@ exports.getSignup = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  console.log('id', req.sessionID)
-  console.log('session', req.session)
-  console.log('sess', req.sess)
+  // console.log('id', req.sessionID)
+  // console.log('session', req.session)
+  // console.log('sess', req.sess)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render('auth/login', {
@@ -130,19 +134,31 @@ exports.postLogin = (req, res, next) => {
         .compare(password, user.password)
         .then(doMatch => {
           if (doMatch) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            if (req.sess.cart){
-            user.cart = req.sess.cart;
+            Session.findOne({_id: req.sessionID})
+            .then(session => {
+            if (session){
+              console.log('sess f')
+              if (session.cart && session.cart.items && (session.cart.items != '')){
+              console.log('session.cart.items', session.cart.items)
+              user.cart = session.cart;
+              req.session.isLoggedIn = true;
+              req.session.user = user;
+            }else{
+                console.log('sess add')
+                session.cart = user.cart;
+                req.session.isLoggedIn = true;
+                req.session.user = user;
+                }
+                session.save()
             }
             if (req.session.tg){
               user.tgName = req.session.tg
             }
             user.save();
-            return req.session.save(err => {
-              console.log(err);
-              res.redirect('/');
-            });
+          
+             req.session.save();
+          });
+          return res.redirect('/cart');
           }
           return res.status(422).render('auth/login', {
             path: '/login',
@@ -278,36 +294,97 @@ exports.postReset = (req, res, next) => {
 exports.getTG = (req, res, next) => {
   const token = req.params.token;
   console.log(req.sessionID)
+  let ll;
   if (token){
+  User.findOne({tgName: token })
+    .then(user => {
+      ll= user;
+      if (!user){
+      req.session.tg = token;
+      req.session.save();
+      return res.redirect('/login');
+      }else{
+      Session.findOne({_id: req.sessionID})
+      .then(session => {
+        if (session){
+          console.log('sess f')
+          if (session.cart && session.cart.items && (session.cart.items != '')){
+          console.log('session.cart.items', session.cart.items)
+          user.cart = session.cart;
+          req.session.isLoggedIn = true;
+          req.session.user = ll; 
+          user.save();}else{
+          console.log('sess add')
+          session.cart = ll.cart;
+          req.session.isLoggedIn = true;
+          req.session.user = ll;
+          session.save();
+          }req.session.save()}}
+          
+      
+      )
+      
+      return res.redirect('/products');
+    }})
+  
     // Session.findById(req.sessionID)
     // .then(session => {
     //   console.log
     //   req.session = session;
-    req.session.tg = token;
-    req.session.save();
+
 
   
   
-  return res.redirect('/login');}else{return res.redirect('/')};
+  }else{return res.redirect('/')};
 }
 
 
 exports.getCart = (req, res, next) => {
   const token = req.params.token;
   let ss;
+  let idlist =[];
+  let cnt = 0;
   if (token){
     // Session.findById(req.sessionID)
     // .then(session => {
     //   console.log
     //   req.session = session;
     Session.findOne({'session.cartString': token })
-    .then(session => {ss = session.cart})
-    Session.findOne({'_id': req.sessionID })
-    .then(session => {
-      session.cart = ss;
-      session.save()})
-  
-  return res.redirect('/cart');}else{return res.redirect('/')};
+    .then(session => {if (session){ss = session}})
+    if (ss != undefined){
+      Session.findOne({'_id': req.sessionID })
+      .then(session => {
+        if (req.session.isLoggedIn != true){
+        
+        ss
+          .populate('cart.items.productId')
+          .execPopulate()
+          .then(ss => {
+          let products = ss.cart.items;
+          console.log(products)
+          products.forEach(p => {
+              if (p.productId.prices == 0){
+                idlist.push(p.productId);
+                cnt++;
+              }; 
+          });
+        for (i=0; i<cnt; i++){
+          ss
+            .removesFromsCart(idlist[i]);
+        }
+        session.cart = ss.cart;
+        session.save();
+        });
+      
+      }else{
+        session.cart = ss.cart;
+        session.save();
+      }
+      
+      })
+  ///////
+    
+  return res.redirect('/cart')}else{return res.redirect('/')};}else{return res.redirect('/')};
 }
 
 exports.getNewPassword = (req, res, next) => {

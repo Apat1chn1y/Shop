@@ -530,6 +530,7 @@ exports.getCheckout = (req, res, next) => {
       const products = user.cart.items;
       let total = 0;
       products.forEach(p => {
+
         total += p.quantity * p.productId.price; 
       });
       res.render('shop/checkout', {
