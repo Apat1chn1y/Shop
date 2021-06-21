@@ -32,8 +32,10 @@
     "mongodb": "^3.1.6",
     "mongoose": "^5.2.17",
     "morgan": "^1.9.1",
+    "node-telegram-login": "^2.0.0",
     "nodemailer": "^4.6.8",
     "nodemailer-sendgrid-transport": "^0.2.0",
+    "slimbot": "^5.1.0",
     "stripe": "^8.14.0",
     "uid-safe": "^2.1.5"
   }

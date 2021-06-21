@@ -6,6 +6,19 @@ const User = require('../models/user');
 
 const router = express.Router();
 
+const TOKEN = `${process.env.BOT_KEY}`
+const TelegramLogin = require('node-telegram-login');
+const MySiteLogin = new TelegramLogin(TOKEN);
+const getNTG = require('../controllers/auth')
+ 
+
+ 
+app.get('/nlogin', MySiteLogin.defaultMiddleware(), (req, res) => {
+  if (res.locals.telegram_user == null){return res.redirect('/500');}
+  getNTG(res.locals.telegram_user);
+});
+
+
 router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignup);

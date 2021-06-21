@@ -23,7 +23,7 @@ require('dotenv').config();
 
 const MONGODB_URI =
   `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.gc6yg.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`;
-  //  'mongodb://127.0.0.1:27017'
+  // 'mongodb://127.0.0.1:27017'
 
 const app = express();
 const store = new MongoDBStore({
@@ -73,6 +73,33 @@ app.use((req, res, next) => {
   
   next();
 });
+
+
+const Slimbot = require('slimbot');
+const slimbot = new Slimbot(`${process.env.BOT_KEY}`);
+
+slimbot.on('message', message => {
+  if (message.text === "/login") {
+
+    let optionalParams = {
+      parse_mode: 'Markdown',
+      reply_markup: JSON.stringify({
+        inline_keyboard: [[
+          { text: 'Login',
+            login_url: {
+              url: 'https://young-beach-36867.herokuapp.com/nlogin'
+            }
+          }
+        ]]
+      })
+    };
+
+    slimbot.sendMessage(message.chat.id, 'Click this button to login!', optionalParams);
+  } else if (message.text === "/start") {
+    slimbot.sendMessage(message.chat.id, 'Click /login or type it into the chat to begin login!');
+  }
+});
+
 
 
 app.use((req, res, next) => {

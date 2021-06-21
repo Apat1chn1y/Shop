@@ -291,6 +291,47 @@ exports.postReset = (req, res, next) => {
       });
   });
 };
+
+exports.getNTG = (telegram_user) => {
+  const token = telegram_user.id.toString();                  //, first_name, last_name, username, photo_url, auth_date и hash
+  let ll;
+  if (token){
+  User.findOne({tgName: token })
+    .then(user => {
+      ll= user;
+      if (!user){
+      req.session.tg = token;
+      req.session.save();
+      return res.redirect('/login');
+      }else{
+      Session.findOne({_id: req.sessionID})
+      .then(session => {
+        if (session){
+          console.log('sess f')
+          if (session.cart && session.cart.items && (session.cart.items != '')){
+          console.log('session.cart.items', session.cart.items)
+          user.cart = session.cart;
+          req.session.isLoggedIn = true;
+          req.session.user = ll; 
+          user.save();}else{
+          console.log('sess add')
+          session.cart = ll.cart;
+          req.session.isLoggedIn = true;
+          req.session.user = ll;
+          session.save();
+          }req.session.save()}}
+          
+      
+      )
+      
+      return res.redirect('/products');
+    }})
+
+  
+  
+  }else{return res.redirect('/')};
+}
+
 exports.getTG = (req, res, next) => {
   const token = req.params.token;
   console.log(req.sessionID)
