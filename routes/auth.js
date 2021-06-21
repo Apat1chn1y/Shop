@@ -10,12 +10,41 @@ const TOKEN = `${process.env.BOT_KEY}`
 const TelegramLogin = require('node-telegram-login');
 const MySiteLogin = new TelegramLogin(TOKEN);
 const getNTG = require('../controllers/auth')
- 
+
+
+// We'll destructure req.query to make our code clearer
+const checkSignature = ({ hash, ...userData }) => {
+  // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
+  const secretKey = createHash('sha256')
+  .update(CONFIG.BOT_TOKEN)
+  .digest();
+
+  // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
+  const dataCheckString = Object.keys(userData)
+  .sort()
+  .map(key => (`${key}=${userData[key]}`))
+  .join('\n');
+
+  // run a cryptographic hash function over the data to be authenticated and the secret
+  const hmac = createHmac('sha256', secretKey)
+  .update(dataCheckString)
+  .digest('hex');
+
+  // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
+  return hmac === hash;
+}
 
  
-app.get('/nlogin', MySiteLogin.defaultMiddleware(), (req, res) => {
-  if (res.locals.telegram_user == null){return res.redirect('/500');}
-  getNTG(res.locals.telegram_user);
+app.get('/nlogin', (req, res) => {
+  // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
+  if (checkSignature(req.query)) {
+    getTG(req.query);
+    // data is authenticated
+    // create session, redirect user etc.
+  } else {
+    return res.redirect('/500')
+    // data is not authenticated
+  }
 });
 
 
