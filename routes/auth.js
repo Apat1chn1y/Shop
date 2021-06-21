@@ -14,7 +14,7 @@ const sha256 = require('js-sha256');
 
 
 // We'll destructure req.query to make our code clearer
-async function checkSignature(data) {
+async function checkSignature({ hash, ...userData }) {
 
   String.prototype.hexEncode = function(){
     var hex, i;
@@ -28,28 +28,53 @@ async function checkSignature(data) {
     return result
 }
 
-
-  console.log(data)
-  // let newDataStr = JSON.stringify(data);
-  // console.log('nd1',newDataStr )
-  // newDataStr = newDataStr.split(',');
-  // console.log('nd2',newDataStr )
-  // newDataStr = newDataStr.sort();
-  // console.log('nd3',newDataStr )
-  // newDataStr = newDataStr.join('\n')
-  // console.log('nd4',newDataStr )
+  // We'll destructure req.query to make our code clearer
   // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
-  data_check_string = data;
-  secret_key = sha256(TOKEN)
-  let shmack = sha256.hmac(data_check_string, secret_key);
-  let nshmack = shmack.hexEncode();
-  if (nshmack == data.hash){
-    console.log('true takoy true')
-    return true
-  }else{
-    console.log('false takoy false')
-    return false}
+  const secretKey = sha256(TOKEN)
+
+  // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
+  const dataCheckString = Object.keys(userData)
+  .sort()
+  .map(key => (`${key}=${userData[key]}`))
+  .join('\n');
+
+  // run a cryptographic hash function over the data to be authenticated and the secret
+  const hmac = sha256.hmac(dataCheckString, secretKey);
+  
+  let nhmac = hmac.hexEncode();
+  let boo = (nhmac === hash)
+  // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
+  return boo;
 }
+
+
+
+
+//   console.log(data)
+//   const dataCheckString = Object.keys(userData)
+//   .sort()
+//   .map(key => (`${key}=${userData[key]}`))
+//   .join('\n');
+//   // let newDataStr = JSON.stringify(data);
+//   // console.log('nd1',newDataStr )
+//   // newDataStr = newDataStr.split(',');
+//   // console.log('nd2',newDataStr )
+//   // newDataStr = newDataStr.sort();
+//   // console.log('nd3',newDataStr )
+//   // newDataStr = newDataStr.join('\n')
+//   // console.log('nd4',newDataStr )
+//   // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
+//   data_check_string = data;
+//   secret_key = sha256(TOKEN)
+//   let shmack = sha256.hmac(data_check_string, secret_key);
+//   let nshmack = shmack.hexEncode();
+//   if (nshmack == data.hash){
+//     console.log('true takoy true')
+//     return true
+//   }else{
+//     console.log('false takoy false')
+//     return false}
+// }
 
  
 router.get('/nlogin', (req, res) => {
