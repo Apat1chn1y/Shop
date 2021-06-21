@@ -10,41 +10,34 @@ const TOKEN = `${process.env.BOT_KEY}`
 // const TelegramLogin = require('node-telegram-login');
 // const MySiteLogin = new TelegramLogin(TOKEN);
 const getNTG = require('../controllers/auth')
-const sha256 = require('js-sha256');
-
+// const sha256 = require('js-sha256');
+// const SHA256 = require("crypto-js/sha256");
+// const HmacSHA256 = require("crypto-js/hmac-sha256");
+// import hmacSHA512 from 'crypto-js/hmac-sha512';
+import { createHash,createHmac } from 'crypto';
 
 // We'll destructure req.query to make our code clearer
 async function checkSignature({ hash, ...userData }) {
-
-  String.prototype.hexEncode = function(){
-    var hex, i;
-
-    var result = "";
-    for (i=0; i<this.length; i++) {
-        hex = this.charCodeAt(i).toString(16);
-        result += ("000"+hex).slice(-4);
-    }
-
-    return result
-}
-
-  // We'll destructure req.query to make our code clearer
-  // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
-  const secretKey = sha256(TOKEN)
-
-  // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
-  const dataCheckString = Object.keys(userData)
-  .sort()
-  .map(key => (`${key}=${userData[key]}`))
-  .join('\n');
-
-  // run a cryptographic hash function over the data to be authenticated and the secret
-  const hmac = sha256.hmac(dataCheckString, secretKey);
   
-  let nhmac = hmac.hexEncode();
-  let boo = (nhmac === hash)
-  // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
-  return boo;
+    // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
+    const secretKey = createHash('sha256')
+    .update(TOKEN)
+    .digest();
+  
+    // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
+    const dataCheckString = Object.keys(userData)
+    .sort()
+    .map(key => (`${key}=${userData[key]}`))
+    .join('\n');
+  
+    // run a cryptographic hash function over the data to be authenticated and the secret
+    const hmac = createHmac('sha256', secretKey)
+    .update(dataCheckString)
+    .digest('hex');
+  
+    // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
+    return hmac === hash;
+  
 }
 
 
@@ -84,7 +77,7 @@ router.get('/nlogin', (req, res) => {
     return res.redirect('/500')
     // data is not authenticated
   } else {
-    console.log('rq', req.query)
+    console.log('tr', req.query)
     getTG(req.query);
     // data is authenticated
     // create session, redirect user etc.
