@@ -35,9 +35,10 @@ const checkSignature = ({ hash, ...userData }) => {
 }
 
  
-app.get('/nlogin', (req, res) => {
+router.get('/nlogin', (req, res) => {
   // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
   if (checkSignature(req.query)) {
+    console.log(req.query)
     getTG(req.query);
     // data is authenticated
     // create session, redirect user etc.
