@@ -7,8 +7,8 @@ const User = require('../models/user');
 const router = express.Router();
 
 const TOKEN = `${process.env.BOT_KEY}`
-const TelegramLogin = require('node-telegram-login');
-const MySiteLogin = new TelegramLogin(TOKEN);
+// const TelegramLogin = require('node-telegram-login');
+// const MySiteLogin = new TelegramLogin(TOKEN);
 const getNTG = require('../controllers/auth')
 
 
