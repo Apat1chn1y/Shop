@@ -15,6 +15,20 @@ const sha256 = require('js-sha256');
 
 // We'll destructure req.query to make our code clearer
 async function checkSignature(data) {
+
+  String.prototype.hexEncode = function(){
+    var hex, i;
+
+    var result = "";
+    for (i=0; i<this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += ("000"+hex).slice(-4);
+    }
+
+    return result
+}
+
+
   console.log(data)
   let newDataStr = JSON.stringify(data);
   console.log('nd1',newDataStr )
@@ -28,7 +42,7 @@ async function checkSignature(data) {
   data_check_string = newDataStr;
   secret_key = sha256(TOKEN)
   let shmack = sha256.hmac(data_check_string, secret_key);
-  let nshmack = shmack.hex();
+  let nshmack = shmack.hexEncode();
   if (nshmack == data.hash){
     console.log('true takoy true')
     return true
