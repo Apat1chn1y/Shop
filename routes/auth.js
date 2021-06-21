@@ -15,6 +15,7 @@ const sha256 = require('js-sha256');
 
 // We'll destructure req.query to make our code clearer
 async function checkSignature(data) {
+  console.log(data)
   let ddata = data.split('&');
   let hash;
   for (i=0 ; i < ddata.length; i++){
