@@ -16,20 +16,19 @@ const sha256 = require('js-sha256');
 // We'll destructure req.query to make our code clearer
 async function checkSignature(data) {
   console.log(data)
-  let ddata = data.split('&');
-  let hash;
-  for (i=0 ; i < ddata.length; i++){
-    if (ddata[i].indexOf("hash=") != -1){
-        let nddata = ddata[i].split('=');
-        hash = nddata[1];
-        break;
-    }
-  }
+  let newDataStr = JSON.stringify(data);
+  console.log('nd1',newDataStr )
+  newDataStr = newDataStr.split(',');
+  console.log('nd2',newDataStr )
+  newDataStr = newDataStr.sort();
+  console.log('nd3',newDataStr )
+  newDataStr = newDataStr.join('\n')
+  console.log('nd4',newDataStr )
   // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
-  data_check_string = data;
+  data_check_string = newDataStr;
   secret_key = sha256(TOKEN)
   let shmack = sha256.hmac(data_check_string, secret_key);
-  if ((shmack.hex()) == hash){
+  if ((shmack.hex()) == data.hash){
     console.log('true takoy true')
     return true
   }else{
