@@ -20,6 +20,9 @@ const Session = require('./models/session');
 const {addcardtosess} = require('./actionwithdb')
 require('dotenv').config();
 
+const Slimbot = require('slimbot');
+const slimbot = new Slimbot(`${process.env.BOT_KEY}`);
+
 
 const MONGODB_URI =
   `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.gc6yg.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`;
@@ -75,8 +78,7 @@ app.use((req, res, next) => {
 });
 
 
-const Slimbot = require('slimbot');
-const slimbot = new Slimbot(`${process.env.BOT_KEY}`);
+
 
 slimbot.on('message', message => {
   if (message.text === "/login") {
