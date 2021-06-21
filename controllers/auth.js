@@ -292,8 +292,9 @@ exports.postReset = (req, res, next) => {
   });
 };
 
-exports.getNTG = (telegram_user) => {
-  const token = telegram_user.id.toString();                  //, first_name, last_name, username, photo_url, auth_date и hash
+exports.getNTG = (ustr) => {
+  let nustr = ustr.split('&');
+  const token = nustr[0];                  //, first_name, last_name, username, photo_url, auth_date и hash
   let ll;
   if (token){
   User.findOne({tgName: token })
