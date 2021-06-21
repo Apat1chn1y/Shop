@@ -28,7 +28,8 @@ async function checkSignature(data) {
   data_check_string = newDataStr;
   secret_key = sha256(TOKEN)
   let shmack = sha256.hmac(data_check_string, secret_key);
-  if ((shmack.hex()) == data.hash){
+  let nshmack = hex(shmack);
+  if (nshmack == data.hash){
     console.log('true takoy true')
     return true
   }else{
