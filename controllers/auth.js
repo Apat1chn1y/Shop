@@ -293,8 +293,15 @@ exports.postReset = (req, res, next) => {
 };
 
 exports.getNTG = (ustr) => {
-  let nustr = ustr.split('&');
-  const token = nustr[0];                  //, first_name, last_name, username, photo_url, auth_date и hash
+  let data = ustr.split('&');
+  let token;
+  for (i=0 ; i < data.length; i++){
+    if (data[i].indexOf("id=") != -1){
+        let ndata = data[i].split('=');
+        token = ndata[1];
+        break;
+    }
+  }                //, first_name, last_name, username, photo_url, auth_date и hash
   let ll;
   if (token){
   User.findOne({tgName: token })

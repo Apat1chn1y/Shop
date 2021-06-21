@@ -10,14 +10,26 @@ const TOKEN = `${process.env.BOT_KEY}`
 // const TelegramLogin = require('node-telegram-login');
 // const MySiteLogin = new TelegramLogin(TOKEN);
 const getNTG = require('../controllers/auth')
+const sha256 = require('js-sha256');
 
 
 // We'll destructure req.query to make our code clearer
 async function checkSignature(data) {
+  let ddata = data.split('&');
+  let hash;
+  for (i=0 ; i < ddata.length; i++){
+    if (ddata[i].indexOf("hash=") != -1){
+        let nddata = ddata[i].split('=');
+        hash = nddata[1];
+        break;
+    }
+  }
   // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
   data_check_string = data;
-  secret_key = SHA256(TOKEN)
-  if (hex(HMAC_SHA256(data_check_string, secret_key)) == hash){
+  secret_key = sha256(TOKEN)
+  let shmack = sha256.hmac(data_check_string, secret_key);
+  if ((shmack.hex()) == hash){
+    console.log('true takoy true')
     return true
   }else{
     console.log('false takoy false')
