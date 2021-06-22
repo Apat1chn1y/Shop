@@ -73,15 +73,16 @@ async function checkSignature({ hash, ...userData }) {
  
 router.get('/nlogin', (req, res) => {
   // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
-  if (checkSignature(req.query) != true ) {
-    console.log('rq', req.query)
-    return res.redirect('/500')
-    // data is not authenticated
-  } else {
+  if (checkSignature(req.query)) {
     console.log('tr', req.query)
     getTG(req.query);
     // data is authenticated
     // create session, redirect user etc.
+  } else {
+    console.log('rq', req.query)
+    return res.redirect('/500')
+    // data is not authenticated
+    
     
   }
 });
