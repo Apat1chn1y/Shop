@@ -44,7 +44,21 @@ async function checkSignature({ hash, ...userData }) {
   
 }
 
-
+async function gook(req, res){
+    // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
+    let sig = await checkSignature(req.query)
+    if (sig) {
+      console.log('tr', req.query)
+      getTG(req.query);
+      // data is authenticated
+      // create session, redirect user etc.
+    } else {
+      console.log('rq', req.query)
+      return res.redirect('/500')
+      // data is not authenticated
+      
+      
+    }}
 
 
 //   console.log(data)
@@ -74,21 +88,9 @@ async function checkSignature({ hash, ...userData }) {
 // }
 
  
-router.get('/nlogin', (req, res) => {
-  // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
-  if (await checkSignature(req.query)) {
-    console.log('tr', req.query)
-    getTG(req.query);
-    // data is authenticated
-    // create session, redirect user etc.
-  } else {
-    console.log('rq', req.query)
-    return res.redirect('/500')
-    // data is not authenticated
-    
-    
-  }
-});
+router.get('/nlogin', gook)
+
+
 
 
 router.get('/login', authController.getLogin);
