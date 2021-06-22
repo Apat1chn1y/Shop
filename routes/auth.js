@@ -9,8 +9,8 @@ const router = express.Router();
 const TOKEN = `${process.env.BOT_KEY}`
 // const TelegramLogin = require('node-telegram-login');
 // const MySiteLogin = new TelegramLogin(TOKEN);
-const getNTG = require('../controllers/auth')
-const crypto = require('crypto');
+// const getNTG = require('../controllers/auth')
+// const crypto = require('crypto');
 // const sha256 = require('js-sha256');
 // const SHA256 = require("crypto-js/sha256");
 // const HmacSHA256 = require("crypto-js/hmac-sha256");
@@ -18,48 +18,9 @@ const crypto = require('crypto');
 
 
 // We'll destructure req.query to make our code clearer
-async function checkSignature({ hash, ...userData }) {
-  
-    // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
-    const secretKey = crypto.createHash('sha256')
-    .update(TOKEN)
-    .digest();
-  
-    // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
-    const dataCheckString = Object.keys(userData)
-    .sort()
-    .map(key => (`${key}=${userData[key]}`))
-    .join('\n');
-  
-    // run a cryptographic hash function over the data to be authenticated and the secret
-    const hmac = crypto.createHmac('sha256', secretKey)
-    .update(dataCheckString)
-    .digest('hex');
-  
 
-    console.log('hmac', hmac)
-    console.log('hash', hash)
-    // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
-    return hmac === hash;
-  
-}
 
-async function gook(req, res){
-    // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
-    let sig = await checkSignature(req.query)
-    if (sig) {
-      console.log('tr', req.query)
-      await getNTG(req.query);
-      return res.redirect('/products');
-      // data is authenticated
-      // create session, redirect user etc.
-    } else {
-      console.log('rq', req.query)
-      return res.redirect('/500')
-      // data is not authenticated
-      
-      
-    }}
+
 
 
 //   console.log(data)
@@ -89,7 +50,7 @@ async function gook(req, res){
 // }
 
  
-router.get('/nlogin', gook)
+router.get('/nlogin', authController.gook);
 
 
 

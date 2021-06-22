@@ -12,6 +12,8 @@ const User = require('../models/user');
 const Session = require('../models/session')
 const { startSession } = require('../models/user');
 const session = require('../models/session');
+const TOKEN = `${process.env.BOT_KEY}`
+const crypto = require('crypto');
 
 
 
@@ -292,6 +294,49 @@ exports.postReset = (req, res, next) => {
   });
 };
 
+async function gook(req, res){
+  // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
+  let sig = await checkSignature(req.query)
+  if (sig) {
+    console.log('tr', req.query)
+    await getNTG(req.query);
+    return;
+    // data is authenticated
+    // create session, redirect user etc.
+  } else {
+    console.log('rq', req.query)
+    return res.redirect('/500')
+    // data is not authenticated
+    
+    
+  }}
+
+async function checkSignature({ hash, ...userData }) {
+  
+  // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
+  const secretKey = crypto.createHash('sha256')
+  .update(TOKEN)
+  .digest();
+
+  // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
+  const dataCheckString = Object.keys(userData)
+  .sort()
+  .map(key => (`${key}=${userData[key]}`))
+  .join('\n');
+
+  // run a cryptographic hash function over the data to be authenticated and the secret
+  const hmac = crypto.createHmac('sha256', secretKey)
+  .update(dataCheckString)
+  .digest('hex');
+
+
+  console.log('hmac', hmac)
+  console.log('hash', hash)
+  // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
+  return hmac === hash;
+
+}
+
 async function getNTG(ustr){
   let token = ustr.id
   // let data = ustr.split('&');
@@ -341,7 +386,7 @@ async function getNTG(ustr){
   }else{return res.redirect('/')};
 }
 
-exports = {getNTG}
+module.exports = {gook}
 
 exports.getTG = (req, res, next) => {
   const token = req.params.token;
