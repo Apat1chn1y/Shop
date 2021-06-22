@@ -14,10 +14,11 @@ const getNTG = require('../controllers/auth')
 // const SHA256 = require("crypto-js/sha256");
 // const HmacSHA256 = require("crypto-js/hmac-sha256");
 // import hmacSHA512 from 'crypto-js/hmac-sha512';
-import { createHash,createHmac } from 'crypto';
+
 
 // We'll destructure req.query to make our code clearer
 async function checkSignature({ hash, ...userData }) {
+  import { createHash,createHmac } from 'crypto';
   
     // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
     const secretKey = createHash('sha256')
