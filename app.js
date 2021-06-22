@@ -127,6 +127,7 @@ slimbot.on('message', message => {
     };
 
     slimbot.sendMessage(message.chat.id, 'Click this button to connect to shop!', optionalParams);
+    slimbot.startPolling();
   }else if (message.text === "/Bot"){
     let optionalParams = {
       parse_mode: 'Markdown',
@@ -142,9 +143,11 @@ slimbot.on('message', message => {
     };
 
     slimbot.sendMessage(message.chat.id, 'Click this button to get bot!', optionalParams);
+    slimbot.startPolling();
   }
   } else if ((message.text === "/start")||((message.text != "/Connect")&&(message.text != "/Bot"))) {
     slimbot.sendMessage(message.chat.id, 'Click /Connect /Bot or type it into the chat!');
+    slimbot.startPolling();
   }
   slimbot.startPolling();
 });
