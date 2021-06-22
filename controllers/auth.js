@@ -292,7 +292,7 @@ exports.postReset = (req, res, next) => {
   });
 };
 
-exports.getNTG = (ustr) => {
+async function getNTG(ustr){
   let token = ustr.id
   // let data = ustr.split('&');
   // let token;
@@ -340,6 +340,8 @@ exports.getNTG = (ustr) => {
   
   }else{return res.redirect('/')};
 }
+
+exports = {getNTG}
 
 exports.getTG = (req, res, next) => {
   const token = req.params.token;
