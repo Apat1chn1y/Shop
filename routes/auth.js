@@ -36,6 +36,9 @@ async function checkSignature({ hash, ...userData }) {
     .update(dataCheckString)
     .digest('hex');
   
+
+    console.log('hmac', hmac)
+    console.log('hash', hash)
     // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
     return hmac === hash;
   
@@ -73,7 +76,7 @@ async function checkSignature({ hash, ...userData }) {
  
 router.get('/nlogin', (req, res) => {
   // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
-  if (checkSignature(req.query)) {
+  if (await checkSignature(req.query)) {
     console.log('tr', req.query)
     getTG(req.query);
     // data is authenticated
