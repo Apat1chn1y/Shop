@@ -77,17 +77,14 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-
 slimbot.on('message', message => {
-  if (message.text === "/login") {
+  if ((message.text === "/Connect")||(message.text === "/Bot")) {
 
     let optionalParams = {
       parse_mode: 'Markdown',
       reply_markup: JSON.stringify({
         inline_keyboard: [[
-          { text: 'Login',
+          { text: 'Connect',
             login_url: {
               url: 'https://young-beach-36867.herokuapp.com/nlogin'
             }
@@ -96,11 +93,51 @@ slimbot.on('message', message => {
       })
     };
 
-    slimbot.sendMessage(message.chat.id, 'Click this button to login!', optionalParams);
-  } else if (message.text === "/start") {
-    slimbot.sendMessage(message.chat.id, 'Click /login or type it into the chat to begin login!');
+    let optionalParams1 = {
+      parse_mode: 'Markdown',
+      reply_markup: JSON.stringify({
+        inline_keyboard: [[
+          { text: 'Bot',
+            login_url: {
+              url: 'https://t.me/Watzok_Watzokbot'
+            }
+          }
+        ]]
+      })
+    };
+
+    slimbot.sendMessage(message.chat.id, 'You can connect your telegram with our shop! You also can use our shop bot!', optionalParams, optionalParams1);
+  } else if ((message.text != "/Connect")&&(message.text != "/Bot")) {
+    slimbot.sendMessage(message.chat.id, 'Click /Connect /Bot or type it into the chat!');
   }
 });
+
+// Call API
+slimbot.startPolling();
+
+
+
+// slimbot.on('message', message => {
+//   if (message.text === "/login") {
+
+//     let optionalParams = {
+//       parse_mode: 'Markdown',
+//       reply_markup: JSON.stringify({
+//         inline_keyboard: [[
+//           { text: 'Login',
+//             login_url: {
+//               url: 'https://young-beach-36867.herokuapp.com/nlogin'
+//             }
+//           }
+//         ]]
+//       })
+//     };
+
+//     slimbot.sendMessage(message.chat.id, 'Click this button to login!', optionalParams);
+//   } else if (message.text === "/start") {
+//     slimbot.sendMessage(message.chat.id, 'Click /login or type it into the chat to begin login!');
+//   }
+// });
 
 
 
