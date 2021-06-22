@@ -294,51 +294,13 @@ exports.postReset = (req, res, next) => {
   });
 };
 
-async function gook(req, res){
+exports.gook = (req, res) => {
   // Basically, you want a function that checks the signature of the incoming data, and deal with it accordingly
-  let sig = await checkSignature(req.query)
-  if (sig) {
-    console.log('tr', req.query)
-    await getNTG(req.query);
-    return;
-    // data is authenticated
-    // create session, redirect user etc.
-  } else {
-    console.log('rq', req.query)
-    return res.redirect('/500')
-    // data is not authenticated
-    
-    
-  }}
-
-async function checkSignature({ hash, ...userData }) {
-  
-  // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
-  const secretKey = crypto.createHash('sha256')
-  .update(TOKEN)
-  .digest();
-
-  // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
-  const dataCheckString = Object.keys(userData)
-  .sort()
-  .map(key => (`${key}=${userData[key]}`))
-  .join('\n');
-
-  // run a cryptographic hash function over the data to be authenticated and the secret
-  const hmac = crypto.createHmac('sha256', secretKey)
-  .update(dataCheckString)
-  .digest('hex');
-
-
-  console.log('hmac', hmac)
-  console.log('hash', hash)
-  // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
-  return hmac === hash;
-
-}
-
-async function getNTG(ustr){
-  let token = ustr.id
+  checkSignature(req.query)
+  .then(boola => {
+    if (boola) {
+      console.log('tr', req.query)
+      let token = req.query.id
   // let data = ustr.split('&');
   // let token;
   // for (i=0 ; i < data.length; i++){
@@ -384,9 +346,92 @@ async function getNTG(ustr){
   
   
   }else{return res.redirect('/')};
+  } else {
+    console.log('rq', req.query)
+    return res.redirect('/500')
+    // data is not authenticated
+    
+    
+  }})}
+  
+    
+
+async function checkSignature({ hash, ...userData }) {
+  
+  // create a hash of a secret that both you and Telegram know. In this case, it is your bot token
+  const secretKey = crypto.createHash('sha256')
+  .update(TOKEN)
+  .digest();
+
+  // this is the data to be authenticated i.e. telegram user id, first_name, last_name etc.
+  const dataCheckString = Object.keys(userData)
+  .sort()
+  .map(key => (`${key}=${userData[key]}`))
+  .join('\n');
+
+  // run a cryptographic hash function over the data to be authenticated and the secret
+  const hmac = crypto.createHmac('sha256', secretKey)
+  .update(dataCheckString)
+  .digest('hex');
+
+
+  console.log('hmac', hmac)
+  console.log('hash', hash)
+  // compare the hash that you calculate on your side (hmac) with what Telegram sends you (hash) and return the result
+  return hmac === hash;
+
 }
 
-module.exports = {gook}
+// async function getNTG(ustr){
+//   let token = ustr.id
+//   // let data = ustr.split('&');
+//   // let token;
+//   // for (i=0 ; i < data.length; i++){
+//   //   if (data[i].indexOf("id=") != -1){
+//   //       let ndata = data[i].split('=');
+//   //       token = ndata[1];
+//   //       break;
+//   //   }
+//   // }                //, first_name, last_name, username, photo_url, auth_date и hash
+//   let ll;
+//   if (token){
+//   User.findOne({tgName: token })
+//     .then(user => {
+//       ll= user;
+//       if (!user){
+//       req.session.tg = token;
+//       req.session.save();
+//       return res.redirect('/login');
+//       }else{
+//       Session.findOne({_id: req.sessionID})
+//       .then(session => {
+//         if (session){
+//           console.log('sess f')
+//           if (session.cart && session.cart.items && (session.cart.items != '')){
+//           console.log('session.cart.items', session.cart.items)
+//           user.cart = session.cart;
+//           req.session.isLoggedIn = true;
+//           req.session.user = ll; 
+//           user.save();}else{
+//           console.log('sess add')
+//           session.cart = ll.cart;
+//           req.session.isLoggedIn = true;
+//           req.session.user = ll;
+//           session.save();
+//           }req.session.save()}}
+          
+      
+//       )
+      
+//       return res.redirect('/products');
+//     }})
+
+  
+  
+//   }else{return res.redirect('/')};
+// }
+
+
 
 exports.getTG = (req, res, next) => {
   const token = req.params.token;
