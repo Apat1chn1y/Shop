@@ -108,7 +108,7 @@ app.use((req, res, next) => {
 // });
 
 
-
+slimbot.startPolling();
 
 slimbot.on('message', message => {
   if ((message.text === "/Connect")||(message.text === "/Bot")) {
@@ -146,11 +146,12 @@ slimbot.on('message', message => {
   } else if ((message.text === "/start")||((message.text != "/Connect")&&(message.text != "/Bot"))) {
     slimbot.sendMessage(message.chat.id, 'Click /Connect /Bot or type it into the chat!');
   }
+  slimbot.startPolling();
 });
 
 
 // Call API
-slimbot.startPolling();
+
 
 
 app.use((req, res, next) => {
