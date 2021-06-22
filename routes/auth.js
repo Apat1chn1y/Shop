@@ -49,7 +49,8 @@ async function gook(req, res){
     let sig = await checkSignature(req.query)
     if (sig) {
       console.log('tr', req.query)
-      getNTG(req.query);
+      await getNTG(req.query);
+      return res.redirect('/products');
       // data is authenticated
       // create session, redirect user etc.
     } else {
